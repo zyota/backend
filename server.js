@@ -1,8 +1,15 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
+const bodyParser = require("body-parser");
+const fs = require("fs");
+const { request } = require("http");
+const { response, json } = require("express");
+
 const port = 2020;
+const app = express();
 app.use(cors());
+app.use(bodyParser.json());
+
 app.get("/products", (request, response) => {
   console.log("GET products huselt orj irlee");
   response.json(data);
@@ -14,6 +21,28 @@ app.get("/users", (request, response) => {
 app.listen(port, () => {
   console.log(`Server is starting at ${port}`);
 });
+
+app.post("/product/add", (request, response) => {
+  console.log("Post huselt orj irlee request: ", request.body);
+  fs.readFile("./data/products.json", (error, data) => {
+    if (err) {
+      response.status(500).send({ messege: error });
+    } else {
+      const products = JSON.parse(data);
+      products.push(request.body);
+      fs.writeFile("./data/products.json", JSON.stringify(products), (err) => {
+        if (err) {
+          response.status(500).send({ messege: err });
+        } else {
+          response
+            .status(200)
+            .send({ messege: "Product added successfully added" });
+        }
+      });
+    }
+  });
+});
+
 // (category = "appliances"), "computers & tablets", "gaming console", "telescope";
 
 const data = [
@@ -235,7 +264,7 @@ const data = [
     name: "Beats Solo3 Headphones",
     id: "4ab6599a",
     image:
-      "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.apple.com%2Fshop%2Fproduct%2FMX432LL%2FA%2Fbeats-solo3-wireless-headphones-the-beats-icon-collection-matte-black&psig=AOvVaw2tl_AIH02av1Ou9DkxSqTX&ust=1673669056089000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCJCPzZ7Vw_wCFQAAAAAdAAAAABAE",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPNYRQpdIJNm1b30_BpDmjxEbtf6WBcsVDjw&usqp=CAU",
     price: 200,
     stock: 60,
     sale: 10,
